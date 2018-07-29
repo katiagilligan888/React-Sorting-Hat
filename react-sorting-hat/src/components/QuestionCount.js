@@ -4,7 +4,7 @@ const QuestionCount = props => {
 
     return (
         <div className = "question-count">
-            <p> Question {props.counter} of {props.total}</p>
+            <p> Question <strong>{props.counter}</strong> of <strong>{props.total}</strong></p>
         </div>
     )
 }

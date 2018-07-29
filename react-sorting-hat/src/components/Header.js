@@ -1,10 +1,13 @@
 import React from "react"; 
 
-const Header = () => {
+const Header = (props) => {
     return(
         <div className = "header">
             <h1>Which Hogwarts House Do You Belong In?</h1>
-            <p> Welcome to Hogwarts! It is now time for you to be sorted into the house where you will spend the next 7 years. There are 4 Houses: Gryffindor, Slytherin, Hufflepuff, and RavenClaw. Good Luck and hope you get the one you desire. </p>
+            <img src = {props.src} width = "300px" />
+            <div className = "header-content">
+                <div className = "start-button" onClick = {props.click}>Begin The Sorting</div>
+            </div>
         </div>
     )
     

@@ -15,86 +15,158 @@ class App extends Component {
     this.state = {
       counter: 1, 
       question: 0, 
-      total: 5,
+      total: 6,
       answerCount : {
         Gryffindor: 0, 
         Slytherin: 0, 
         Hufflepuff: 0, 
         Ravenclaw: 0
       },
-      finished: ""
+      begin: false,
+      finished: false
     }
   }
 
-  clickedAnswerHandler = (type) => {
-    if(this.state.question <= 6 ){
-      this.setState(prevState =>{
-        return {
-          counter: prevState.counter + 1,
-          question: prevState.counter + 1
-        }
-      });
+  clickedStartHandler = () => {
+    if(this.state.begin === false){
+      this.setState({
+        begin: true
+      })
+    }
+  }
+
+  tryAgainClickHandler = () => {
+    if(this.state.begin){
+      this.setState({
+        counter: 1, 
+        question: 0, 
+        total: 6, 
+        answerCount : {
+          Gryffindor: 0, 
+          Slytherin: 0, 
+          Hufflepuff: 0, 
+          Ravenclaw: 0
+        },
+        finished: false,
+        begin:false
+      })
+    }
+  }
+
+  clickedAnswerHandler = type => {
+
+    if(this.state.question < 5){
+
       if(type === "Gryffindor"){
         this.setState(prevState => {
           return {
             answerCount: {
-              Gryffindor: prevState.answerCount.Gryffindor + 20,
-              Slytherin: prevState.answerCount.Slytherin, 
-              Hufflepuff: prevState.answerCount.Hufflepuff, 
-              Ravenclaw: prevState.answerCount.Ravenclaw
-            }
-          }
-        }); 
+              ...prevState.answerCount, 
+              Gryffindor: prevState.answerCount.Gryffindor + 20, 
+            }, 
+            counter: prevState.counter + 1, 
+            question: prevState.question + 1
+          }; 
+        })
       }
       if(type === "Slytherin"){
         this.setState(prevState => {
-            return{ answerCount: {
-                Gryffindor: prevState.answerCount.Gryffindor,
-                Slytherin: prevState.answerCount.Slytherin + 20, 
-                Hufflepuff: prevState.answerCount.Hufflepuff, 
-                Ravenclaw: prevState.answerCount.Ravenclaw
-             }
+          return {
+            answerCount: {
+              ...prevState.answerCount, 
+              Slytherin: prevState.answerCount.Slytherin + 20, 
+            }, 
+            counter: prevState.counter + 1, 
+            question: prevState.question + 1
           }
-        });
-      } 
+        })
+      }
       if(type === "Hufflepuff"){
-          this.setState(prevState => {
-            return { answerCount: {
-              Gryffindor: prevState.answerCount.Gryffindor,
-              Slytherin: prevState.answerCount.Slytherin, 
-              Hufflepuff: prevState.answerCount.Hufflepuff + 20, 
-              Ravenclaw: prevState.answerCount.Ravenclaw
-            }
+        this.setState(prevState => {
+          return {
+            answerCount: {
+              ...prevState.answerCount, 
+              Hufflepuff: prevState.answerCount.Hufflepuff + 20,
+            }, 
+            counter: prevState.counter + 1, 
+            question: prevState.question + 1
           }
-          });
-        }
+        })
+      }
       if(type === "Ravenclaw"){
-              this.setState(prevState => {
-                return { answerCount: {
-                  Gryffindor: prevState.answerCount.Gryffindor,
-                  Slytherin: prevState.answerCount.Slytherin , 
-                  Hufflepuff: prevState.answerCount.Hufflepuff, 
-                  Ravenclaw: prevState.answerCount.Ravenclaw + 20, 
-                }
-              }
-              }); 
-            }
+        this.setState(prevState => {
+          return {
+            answerCount: {
+              ...prevState.answerCount, 
+              Ravenclaw: prevState.answerCount.Ravenclaw + 20,
+            }, 
+            counter: prevState.counter + 1, 
+            question: prevState.question + 1
+          }
+        })
+      }
+
+    }else{
+      this.setState({
+          finished: true
+      });
+    }
+  }
+
+
+  getWinner() {
+    
+    const winner =Object.entries(this.state.answerCount).sort(
+      (a, b) => b[1] - a[1]
+    )[0][0];
+
+    return winner
+  }
+
+  render() {
+    
+    let questionsShow = null;
+    let result = null;
+    let beginScreen = null; 
+
+    if(!this.state.begin){
+      beginScreen = (
+        <div>
+          <Header src ={require("./HogwartsHouses.png")} click = {this.clickedStartHandler} />
+        </div>)
+    }else {
+      if (!this.state.finished) {
+        questionsShow = (
+          <div className = "question-content">
+            <QuestionCount
+              counter={this.state.counter}
+              total={this.state.total}
+            />
+            <Question question={questions[this.state.question].question} />
+            <Answers
+              click={this.clickedAnswerHandler}
+              answers={questions[this.state.question].answers}
+            />
+          </div>
+        );
+      } else {
+        result = (
+          <div className = "result">
+            <h1>Result</h1>
+            <h2>{this.getWinner()}</h2>
+            <div onClick = {this.tryAgainClickHandler} className = "newTestButton">Try Again</div>
+          </div>
+        );
+      }
     }
 
-    // if(this.state.question === 5){
-    //   console.log("done")
-    //   this.setState({
-    //     question: 0
-    //   });
-    // }
-  }
-  render() {
+    
+
     return (
       <div className="App">
-        <Header />
-        <QuestionCount counter = {this.state.counter} total = {this.state.total} />
-        <Question  question = {questions[this.state.question].question}  />
-        <Answers click = {this.clickedAnswerHandler} answers = {questions[this.state.question].answers} />
+        {beginScreen}
+        {questionsShow}
+        {result}
       </div>
     );
   }
