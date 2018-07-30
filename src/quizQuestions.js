@@ -48,7 +48,7 @@ const questions = [
     }, 
     {
         id: 3,
-        question: "What would you NOT want to remembered as in wizard history?", 
+        question: "What would you NOT want to be remembered as in wizard history?", 
         answers: [
             {
                 type: "Slytherin", 
